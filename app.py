@@ -63,7 +63,7 @@ def request_seed():
 
         return jsonify({
             "success": True,
-            "seed": seed
+            "data": seed
         })
 
     except Exception as e:
