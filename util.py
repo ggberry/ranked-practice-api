@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GIST_RAW_URL = os.getenv("GIST_RAW_URL")
-print(GIST_RAW_URL)
 
 requests_log = defaultdict(list)
 RATE_LIMIT = 30
