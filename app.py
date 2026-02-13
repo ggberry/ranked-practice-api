@@ -13,7 +13,15 @@ requests_log = defaultdict(list)
 RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
-SEED_TYPES = ["bucket_portal", "normal_portal", "village", "shipwreck", "treasure", "temple"]
+SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "bucket_portal", "normal_portal",]
+SEED_ID_MAPPING = {
+    "village": 0,
+    "shipwreck": 1,
+    "treasure": 2,
+    "temple": 3,
+    "bucket_portal": 4,
+    "normal_portal": 5,
+}
 
 
 def rate_limited(ip):
@@ -32,14 +40,16 @@ def rate_limited(ip):
 
 def fetch_seeds(is_random=True):
     headers = {}
+    seed_type = chose_type(is_random=is_random)
+    seed_id = SEED_ID_MAPPING[seed_type]
 
-    overworld_response = requests.get(GIST_RAW_URL + chose_type(is_random=is_random), headers=headers, timeout=10)
+    overworld_response = requests.get(GIST_RAW_URL + seed_type, headers=headers, timeout=10)
     nether_response = requests.get(GIST_RAW_URL + "nether_seeds.json", headers=headers, timeout=10)
 
     if overworld_response.status_code != 200 or nether_response.status_code != 200:
         raise Exception("Failed to fetch gist")
 
-    return [overworld_response.json(), nether_response.json()]
+    return {"overworld": overworld_response.json(), "nether": nether_response.json(), "type": seed_id}
 
 
 def chose_type(is_random=True, *args):
@@ -58,14 +68,16 @@ def request_seed():
         abort(429, description="Too many requests")
 
     try:
-        seeds = fetch_seeds()
-        overworldData = random.choice(seeds[0])
-        netherData = random.choice(seeds[1])
+        seed_info = fetch_seeds()
+        overworld_data = random.choice(seed_info["overworld"])
+        nether_data = random.choice(seed_info["nether"])
+        seed_type = seed_info["type"]
 
         return jsonify({
             "success": True,
-            "overworld": overworldData,
-            "nether": netherData
+            "overworld": overworld_data,
+            "nether": nether_data,
+            "type": seed_type
         })
 
     except Exception as e:
