@@ -59,9 +59,7 @@ def request_seed():
 
     try:
         seeds = fetch_seeds()
-        print(seeds)
         overworldData = random.choice(seeds[0])
-        print(overworldData)
         netherData = random.choice(seeds[1])
 
         return jsonify({
