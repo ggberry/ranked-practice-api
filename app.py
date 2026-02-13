@@ -13,15 +13,8 @@ requests_log = defaultdict(list)
 RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
-SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "bucket_portal", "normal_portal",]
-SEED_ID_MAPPING = {
-    "village": 0,
-    "shipwreck": 1,
-    "treasure": 2,
-    "temple": 3,
-    "bucket_portal": 4,
-    "normal_portal": 5,
-}
+SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "bucket_portal", "normal_portal"]
+SEED_ID_MAPPING = {name: SEED_TYPES.index(name) for name in SEED_TYPES}
 
 
 def rate_limited(ip):
