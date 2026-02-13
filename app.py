@@ -14,7 +14,7 @@ RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
 SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "bucket_portal", "normal_portal"]
-SEED_ID_MAPPING = {name: SEED_TYPES.index(name) for name in SEED_TYPES}
+SEED_ID_MAPPING = {f"{name}_seeds.json": SEED_TYPES.index(name) for name in SEED_TYPES}
 
 
 def rate_limited(ip):
@@ -34,8 +34,8 @@ def rate_limited(ip):
 def fetch_seeds(is_random=True):
     headers = {}
     seed_type = chose_type(is_random=is_random)
-    seed_id = SEED_ID_MAPPING[seed_type]
 
+    seed_id = SEED_ID_MAPPING[seed_type]
     overworld_response = requests.get(GIST_RAW_URL + seed_type, headers=headers, timeout=10)
     nether_response = requests.get(GIST_RAW_URL + "nether_seeds.json", headers=headers, timeout=10)
 
