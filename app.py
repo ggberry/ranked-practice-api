@@ -41,5 +41,5 @@ def request_seed():
 def index():
     return "Ranked Practice seed API is running."
 
-app.run()
+# app.run()
 # gunicorn app:app --bind 0.0.0.0:$PORT
