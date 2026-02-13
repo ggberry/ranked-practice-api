@@ -13,7 +13,7 @@ requests_log = defaultdict(list)
 RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
-SEED_TYPES = ["bucket_portal", "normal_portal", "nether", "village", "shipwreck", "treasure", "temple"]
+SEED_TYPES = ["bucket_portal", "normal_portal", "village", "shipwreck", "treasure", "temple"]
 
 
 def rate_limited(ip):
@@ -30,18 +30,19 @@ def rate_limited(ip):
     return False
 
 
-def fetch_seeds(is_random):
+def fetch_seeds(is_random=True):
     headers = {}
 
-    response = requests.get(GIST_RAW_URL + chose_type(is_random=is_random), headers=headers, timeout=10)
+    overworld_response = requests.get(GIST_RAW_URL + chose_type(is_random=is_random), headers=headers, timeout=10)
+    nether_response = requests.get(GIST_RAW_URL + "nether_seeds.json", headers=headers, timeout=10)
 
-    if response.status_code != 200:
+    if overworld_response.status_code != 200 or nether_response.status_code != 200:
         raise Exception("Failed to fetch gist")
 
-    return response.json()
+    return [overworld_response.json(), nether_response.json()]
 
 
-def chose_type(is_random=False, *args):
+def chose_type(is_random=True, *args):
     if is_random:
         return random.choice(SEED_TYPES) + "_seeds.json"
 
@@ -57,13 +58,16 @@ def request_seed():
         abort(429, description="Too many requests")
 
     try:
-        seeds = fetch_seeds(True)
-
-        seed = random.choice(seeds)
+        seeds = fetch_seeds()
+        print(seeds)
+        overworldData = random.choice(seeds[0])
+        print(overworldData)
+        netherData = random.choice(seeds[1])
 
         return jsonify({
             "success": True,
-            "data": seed
+            "overworld": overworldData,
+            "nether": netherData
         })
 
     except Exception as e:
@@ -77,5 +81,5 @@ def request_seed():
 def index():
     return "Ranked Practice seed API is running."
 
-
+# app.run()
 # gunicorn app:app --bind 0.0.0.0:$PORT
