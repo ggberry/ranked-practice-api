@@ -32,9 +32,9 @@ def rate_limited(ip):
     return False
 
 
-def fetch_seeds(is_random=True):
+def fetch_seeds(arg):
     headers = {}
-    seed_type = chose_type(is_random=is_random)
+    seed_type = chose_type(arg)
 
     seed_id = SEED_ID_MAPPING[seed_type]
     overworld_response = requests.get(GIST_RAW_URL + seed_type, headers=headers, timeout=10)
@@ -61,8 +61,11 @@ def get_seed_counts():
     return result
 
 
-def chose_type(is_random=True, *args):
-    if is_random:
-        return random.choice(SEED_TYPES) + "_seeds.json"
+def chose_type(arg):
+    suffix = "_seeds.json"
+    is_random = arg == "random"
 
-    return args[0] + "_seeds.json"
+    if is_random:
+        return random.choice(SEED_TYPES) + suffix
+
+    return arg + suffix

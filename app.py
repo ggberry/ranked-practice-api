@@ -9,8 +9,8 @@ def seeds():
     return get_seed_counts()
 
 
-@app.route("/request-seed", methods=["POST"])
-def request_seed():
+@app.route("/request-seed/<seed_type>", methods=["POST"])
+def request_seed(seed_type):
     client_ip = request.remote_addr
 
     # Rate limit check
@@ -18,22 +18,22 @@ def request_seed():
         abort(429, description="Too many requests")
 
     try:
-        seed_info = fetch_seeds()
+        seed_info = fetch_seeds(seed_type)
         overworld_data = random.choice(seed_info["overworld"])
         nether_data = random.choice(seed_info["nether"])
-        seed_type = seed_info["type"]
+        seed_type_id = seed_info["type"]
 
         return jsonify({
             "success": True,
             "overworld": overworld_data,
             "nether": nether_data,
-            "type": seed_type
+            "type": seed_type_id
         })
 
-    except Exception as e:
+    except Exception as error:
         return jsonify({
             "success": False,
-            "error": str(e)
+            "error": str(error)
         }), 500
 
 
