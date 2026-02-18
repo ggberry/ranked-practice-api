@@ -53,7 +53,7 @@ def get_seed_counts():
     nether_response = requests.get(GIST_RAW_URL + "nether_seeds.json", headers=headers, timeout=10)
 
     for seed_type in SEED_TYPES:
-        overworld_response = requests.get(GIST_RAW_URL + chose_type(False, seed_type), headers=headers, timeout=10)
+        overworld_response = requests.get(GIST_RAW_URL + chose_type(seed_type), headers=headers, timeout=10)
         result[seed_type] = len(overworld_response.json())
 
     result["nether"] = len(nether_response.json())
