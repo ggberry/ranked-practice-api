@@ -14,11 +14,15 @@ requests_log = defaultdict(list)
 RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
-SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "bucket_portal", "normal_portal"]
+SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "portal"]
 SEED_ID_MAPPING = {f"{name}_seeds.json": SEED_TYPES.index(name) for name in SEED_TYPES}
 
 
 def rate_limited(ip):
+    """
+    Rate limiting
+    """
+
     now = time.time()
     requests_log[ip] = [
         t for t in requests_log[ip]
@@ -33,6 +37,12 @@ def rate_limited(ip):
 
 
 def fetch_seeds(arg):
+    """
+    Returns information regarding the filtered seed:
+    Overworld: seed & chunk coordinates of relevant starting structure
+    Nether: seed & chunk of closest bastion
+    """
+
     headers = {}
     seed_type = chose_type(arg)
 
@@ -47,6 +57,10 @@ def fetch_seeds(arg):
 
 
 def get_seed_counts():
+    """
+    Returns the size of the seed pool per seed type
+    """
+
     headers = {}
     result = {}
 
@@ -62,10 +76,25 @@ def get_seed_counts():
 
 
 def chose_type(arg):
+    """
+    Helper function for `fetch_seeds`
+    Returns a set or random seed type based on `arg`
+    """
+
     suffix = "_seeds.json"
     is_random = arg == "random"
+    seed_type = random.choice(SEED_TYPES)
 
-    if is_random:
-        return random.choice(SEED_TYPES) + suffix
+    if not is_random:
+        return arg + suffix
 
-    return arg + suffix
+    if seed_type != "portal":
+        return seed_type + suffix
+
+    prefix = "normal_"
+
+    if random.random() <= 0.1:
+        prefix = "bucket_"
+
+    return prefix + seed_type + suffix
+

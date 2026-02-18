@@ -5,12 +5,20 @@ app = Flask(__name__)
 
 
 @app.route("/seed-counts", methods=["POST"])
-def seeds():
+def seed_counts():
+    """
+    Return seed count data
+    """
+
     return get_seed_counts()
 
 
 @app.route("/request-seed/<seed_type>", methods=["POST"])
 def request_seed(seed_type):
+    """
+    Returns data for a random set of seeds (overworld + nether)
+    """
+
     client_ip = request.remote_addr
 
     # Rate limit check
@@ -39,7 +47,12 @@ def request_seed(seed_type):
 
 @app.route("/")
 def index():
+    """
+    Index page
+    """
+
     return "Ranked Practice seed API is running."
 
+# RUN:
 # app.run()
 # gunicorn app:app --bind 0.0.0.0:$PORT
