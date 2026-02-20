@@ -14,7 +14,7 @@ requests_log = defaultdict(list)
 RATE_LIMIT = 30
 WINDOW_SECONDS = 60
 
-SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "portal"]
+SEED_TYPES = ["village", "shipwreck", "treasure", "temple", "normal_portal", "bucket_portal"]
 SEED_ID_MAPPING = {f"{name}_seeds.json": SEED_TYPES.index(name) for name in SEED_TYPES}
 
 
@@ -47,6 +47,7 @@ def fetch_seeds(arg):
     seed_type = chose_type(arg)
 
     seed_id = SEED_ID_MAPPING[seed_type]
+
     overworld_response = requests.get(GIST_RAW_URL + seed_type, headers=headers, timeout=10)
     nether_response = requests.get(GIST_RAW_URL + "nether_seeds.json", headers=headers, timeout=10)
 
@@ -88,7 +89,7 @@ def chose_type(arg):
     if not is_random:
         return arg + suffix
 
-    if seed_type != "portal":
+    if not seed_type.endswith("portal"):
         return seed_type + suffix
 
     prefix = "normal_"
