@@ -1,35 +1,24 @@
 from flask import Flask, request, jsonify, abort
-from util.seed_fetcher import *
-from util.filter_status import FilterInfo
+from util import *
 
 app = Flask(__name__)
-filter_info = FilterInfo()
 
 
-@app.route("/filter-status", methods=["GET", "POST"])
-def filter_status():
-    if request.method == "GET":
-        return filter_info.get_status()
+@app.route("/seed-counts", methods=["POST"])
+def seed_counts():
+    """
+    Return seed count data
+    """
 
-    if not request.is_json:
-        abort(400, description="Request must be JSON")
-
-    data = request.get_json()
-
-    required = ["enabled", "percentage", "current", "total"]
-    if any(key not in data for key in required):
-        abort(400, description="Invalid request")
-
-    filter_info.enabled = data["enabled"]
-    filter_info.percentage = data["percentage"]
-    filter_info.current = data["current"]
-    filter_info.total = data["total"]
-
-    return f"Received data: {data}"
+    return get_seed_counts()
 
 
 @app.route("/request-seed/<seed_type>", methods=["POST"])
 def request_seed(seed_type):
+    """
+    Returns data for a random set of seeds (overworld + nether)
+    """
+
     client_ip = request.remote_addr
 
     # Rate limit check
@@ -56,16 +45,14 @@ def request_seed(seed_type):
         }), 500
 
 
-@app.route("/seed-counts", methods=["POST"])
-def seeds():
-    return get_seed_counts()
-
-
 @app.route("/")
 def index():
+    """
+    Index page
+    """
+
     return "Ranked Practice seed API is running."
 
-
-if __name__ == "__main__":
-    app.run(port=4000)
+# RUN:
+# app.run()
 # gunicorn app:app --bind 0.0.0.0:$PORT
