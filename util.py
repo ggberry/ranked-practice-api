@@ -94,8 +94,8 @@ def chose_type(arg):
 
     prefix = "normal_"
 
-    if random.random() <= 0.1:
+    if random.random() <= 0.25:
         prefix = "bucket_"
 
-    return prefix + seed_type + suffix
+    return prefix + "portal" + suffix
 
