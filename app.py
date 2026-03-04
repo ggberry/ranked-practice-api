@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify, abort
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 from util.seed_fetcher import *
 from util.filter_status import FilterInfo
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+
 filter_info = FilterInfo()
 
 
@@ -77,7 +81,7 @@ def index():
     Index page
     """
 
-    return "Ranked Practice seed API is running."
+    return '<span style="font-family: Consolas; font-size: 16px;">Ranked Practice seed API is running.</span>'
 
 # RUN:
 # app.run(debug=True)
