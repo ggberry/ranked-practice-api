@@ -79,5 +79,5 @@ def index():
     return '<span style="font-family: Consolas; font-size: 16px;">Ranked Practice seed API is running.</span>'
 
 # RUN:
-app.run(debug=True)
+# app.run(debug=True)
 # gunicorn app:app --bind 0.0.0.0:$PORT
