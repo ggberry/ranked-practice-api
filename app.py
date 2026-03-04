@@ -22,7 +22,11 @@ def filter_status():
     if not request.is_json:
         abort(400, description="Request must be JSON")
 
-    ip = request.remote_addr
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+    if ip and "," in ip:
+        ip = ip.split(",")[0].strip()
+
     data = request.get_json()
     filter_info.status_update(ip, data)
 
