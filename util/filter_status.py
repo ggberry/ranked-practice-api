@@ -4,7 +4,7 @@ from datetime import datetime
 
 class FilterInfo:
     def __init__(self):
-        self.max_timeout = 60
+        self.max_timeout = 180
         self.required = {"current": int, "total": int}
         self.progress_data = {}  # Format: {"127.0.0.1": {"enabled": True, "current": 60, "total": 100, "timestamp": ...}, ...}
 
